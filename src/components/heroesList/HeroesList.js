@@ -2,10 +2,10 @@ import {useHttp} from '../../hooks/http.hook';
 import { useEffect,useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { CSSTransition, TransitionGroup} from 'react-transition-group';
-import { createSelector } from 'reselect'
+import { createSelector } from '@reduxjs/toolkit'
 
-import { fetchHeroes } from '../../actions';
-import { heroDeleted } from './heroesSlice'
+
+import { heroDeleted, fetchHeroes } from './heroesSlice'
 import HeroesListItem from "../heroesListItem/HeroesListItem";
 import Spinner from '../spinner/Spinner';
 
@@ -20,7 +20,6 @@ const HeroesList = () => {
         (state) => state.heroes.heroes,
         (filter, heroes) => {
             if (filter === 'all') {
-                // console.log('render')
                 return heroes;
             } else {
                 return heroes.filter(item => item.element === filter)
@@ -29,21 +28,12 @@ const HeroesList = () => {
     );
     const filteredHeroes = useSelector(filteredHeroesSelector)
 
-    // В этом варианте происходит лишний рендер при нажатии на тот же фольтр, надо использовать мемоизацию createSelector
-    // const filteredHeroes = useSelector(state => {
-    //     if (state.filters.activeFilter === 'all') {
-    //         console.log('render')
-    //         return state.heroes.heroes;
-    //     } else {
-    //         return state.heroes.heroes.filter(item => item.element === state.filters.activeFilter)
-    //     }
-    // })
     const heroesLoadingStatus = useSelector(state => state.heroes.heroesLoadingStatus);
     const dispatch = useDispatch();
     const {request} = useHttp();
 
     useEffect(() => {
-        dispatch(fetchHeroes(request));
+        dispatch(fetchHeroes());
         // eslint-disable-next-line
     }, []);
 
